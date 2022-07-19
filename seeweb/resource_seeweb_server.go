@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-	"github.com/uwtrilogyseaward0m/go-seeweb/seeweb"
+	"github.com/Seeweb/cloudserver-go-client/seeweb"
 )
 
 func resourceSeewebServer() *schema.Resource {

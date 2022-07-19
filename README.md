@@ -7,17 +7,18 @@
 
 ## Building The Provider
 
-Clone repository to: `$GOPATH/src/github.com/uwtrilogyseaward0m/terraform-provider-seeweb`
+Clone repository to: `$GOPATH/src/github.com/Seeweb/terraform-provider`
 
 ```sh
-$ mkdir -p $GOPATH/src/github.com/uwtrilogyseaward0m; cd $GOPATH/src/github.com/uwtrilogyseaward0m
-$ git clone git@github.com:uwtrilogyseaward0m/terraform-provider-seeweb
+$ mkdir -p $GOPATH/src/github.com/Seeweb; cd $GOPATH/src/github.com/Seeweb
+$ git clone git@github.com:Seeweb/terraform-provider
 ```
 
 Enter the provider directory and build the provider
 
 ```sh
-$ cd $GOPATH/src/github.com/uwtrilogyseaward0m/terraform-provider-seeweb
+$ cd $GOPATH/src/github.com/Seeweb/terraform-provider
+$ export GOPRIVATE=github.com/Seeweb/* # This step is only necessary if the modules are kept private
 $ make build
 ```
 ### Testing

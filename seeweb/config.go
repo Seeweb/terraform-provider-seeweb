@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/Seeweb/cloudserver-go-client/seeweb"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
-	"github.com/uwtrilogyseaward0m/go-seeweb/seeweb"
 )
 
 // Config defines the configuration options for the Seeweb client

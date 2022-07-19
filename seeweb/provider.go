@@ -5,8 +5,8 @@ import (
 	"log"
 	"runtime"
 
+	"github.com/Seeweb/cloudserver-go-client/seeweb"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/uwtrilogyseaward0m/go-seeweb/seeweb"
 )
 
 // Provider represents a resource provider in Terraform

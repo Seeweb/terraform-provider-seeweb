@@ -1,10 +1,10 @@
-module github.com/uwtrilogyseaward0m/terraform-provider-seeweb
+module github.com/Seeweb/terraform-provider
 
 go 1.18
 
 require (
+	github.com/Seeweb/cloudserver-go-client v0.0.0-20220719032305-b0222dc9b4ab
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.19.0
-	github.com/uwtrilogyseaward0m/go-seeweb v0.0.0-20220718044028-af0ea5e82177
 )
 
 require (
