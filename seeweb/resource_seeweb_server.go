@@ -24,14 +24,17 @@ func resourceSeewebServer() *schema.Resource {
 			"plan": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 			"location": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 			"image": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 			"notes": {
 				Type:     schema.TypeString,
@@ -40,6 +43,7 @@ func resourceSeewebServer() *schema.Resource {
 			"ssh_key": {
 				Type:     schema.TypeString,
 				Optional: true,
+				ForceNew: true,
 			},
 			"group": {
 				Type:     schema.TypeString,
@@ -260,7 +264,7 @@ func flattenServer(d *schema.ResourceData, server *seeweb.Server) error {
 	d.Set("active_flag", server.ActiveFlag)
 	d.Set("status", server.Status)
 	d.Set("api_version", server.APIVersion)
-	// d.Set("group", server.Group)
+	d.Set("group", server.Group)
 	d.Set("user", server.User)
 
 	if server.PlanSize != nil {

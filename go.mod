@@ -3,7 +3,7 @@ module github.com/Seeweb/terraform-provider
 go 1.18
 
 require (
-	github.com/Seeweb/cloudserver-go-client v0.0.0-20220719032305-b0222dc9b4ab
+	github.com/Seeweb/cloudserver-go-client v0.0.0-20220719042110-1bfe0a1824b6
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.19.0
 )
 
