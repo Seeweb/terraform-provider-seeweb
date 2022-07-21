@@ -2,6 +2,8 @@ package seeweb
 
 import (
 	"log"
+	"strconv"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -20,10 +22,6 @@ func dataSourceSeewebServer() *schema.Resource {
 				Computed: true,
 			},
 			"location": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"image": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -101,5 +99,11 @@ func dataSourceSeewebServer() *schema.Resource {
 
 func dataSourceSeewebServerRead(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Reading Seeweb server %s", d.Id())
-	return fetchServer(d, meta, handleNotFoundError)
+	err := fetchServer(d, meta, handleNotFoundError)
+	if err != nil {
+		return err
+	}
+
+	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	return nil
 }

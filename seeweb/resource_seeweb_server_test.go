@@ -11,7 +11,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-var TEST_RESOURCE_PREFIX = "DESTROY-AFTER-TESTACC"
+const (
+	TEST_RESOURCE_PREFIX = "DESTROY-AFTER-TESTACC"
+)
 
 func init() {
 	resource.AddTestSweepers("seeweb_server", &resource.Sweeper{
@@ -65,17 +67,17 @@ func TestAccSeewebServer_Basic(t *testing.T) {
 			{
 				Config: testAccCheckSeewebServerConfig(plan, location, image, notes),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckSeewebServerExists("seeweb_server.foo"),
+					testAccCheckSeewebServerExists("seeweb_server.testacc"),
 					resource.TestCheckResourceAttr(
-						"seeweb_server.foo", "plan", plan),
+						"seeweb_server.testacc", "plan", plan),
 					resource.TestCheckResourceAttr(
-						"seeweb_server.foo", "location", location),
+						"seeweb_server.testacc", "location", location),
 					resource.TestCheckResourceAttr(
-						"seeweb_server.foo", "image", image),
+						"seeweb_server.testacc", "image", image),
 					resource.TestCheckResourceAttr(
-						"seeweb_server.foo", "notes", notes),
+						"seeweb_server.testacc", "notes", notes),
 					resource.TestCheckResourceAttr(
-						"seeweb_server.foo", "active_flag", "false"),
+						"seeweb_server.testacc", "active_flag", "false"),
 				),
 			},
 		},
@@ -129,12 +131,12 @@ func testAccCheckSeewebServerExists(n string) resource.TestCheckFunc {
 
 func testAccCheckSeewebServerConfig(plan, location, image, notes string) string {
 	return fmt.Sprintf(`
-resource "seeweb_server" "foo" {
-	plan        = "%s"
-	location       = "%s"
-	image       = "%s"
-	notes       = "%s"
-}
+    resource "seeweb_server" "testacc" {
+      plan        = "%s"
+      location       = "%s"
+      image       = "%s"
+      notes       = "%s"
+    }
 
 `, plan, location, image, notes)
 }

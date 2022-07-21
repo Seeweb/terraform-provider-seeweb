@@ -161,12 +161,13 @@ func fetchServer(d *schema.ResourceData, meta interface{}, errCallback func(erro
 	}
 
 	return resource.Retry(2*time.Minute, func() *resource.RetryError {
-		server, err := getServerByName(d.Id(), client)
+		name := d.Get("name").(string)
+		server, err := getServerByName(name, client)
 		if err != nil {
-			log.Printf("[WARN] Server read error")
+			log.Printf("[INFO] Server read error. Retrying in %d seconds", retryAfter30Seconds)
 			errResp := errCallback(err, d)
 			if errResp != nil {
-				time.Sleep(2 * time.Second)
+				time.Sleep(time.Duration(retryAfter30Seconds) * time.Second)
 				return resource.RetryableError(errResp)
 			}
 
@@ -176,7 +177,7 @@ func fetchServer(d *schema.ResourceData, meta interface{}, errCallback func(erro
 
 		if server == nil {
 			return resource.NonRetryableError(
-				fmt.Errorf("Unable to locate any server with the name: %s", d.Id()),
+				fmt.Errorf("Unable to locate any server with the name: %s", name),
 			)
 		}
 
@@ -206,6 +207,7 @@ func resourceSeewebServerCreate(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	d.SetId(resp.Server.Name)
+	d.Set("name", resp.Server.Name)
 
 	return fetchServer(d, meta, genError)
 }
@@ -245,7 +247,8 @@ func resourceSeewebServerDelete(d *schema.ResourceData, meta interface{}) error 
 	return resource.Retry(2*time.Minute, func() *resource.RetryError {
 		log.Printf("[INFO] Deleting Seeweb server %s", d.Id())
 		if _, _, err := client.Server.Delete(d.Id()); err != nil {
-			time.Sleep(30 * time.Second)
+			log.Printf("[INFO] Server deletion error. Retrying in %d seconds", retryAfter30Seconds)
+			time.Sleep(time.Duration(retryAfter30Seconds) * time.Second)
 			return resource.RetryableError(err)
 		}
 
@@ -255,7 +258,21 @@ func resourceSeewebServerDelete(d *schema.ResourceData, meta interface{}) error 
 }
 
 func flattenServer(d *schema.ResourceData, server *seeweb.Server) error {
-	d.Set("name", server.Name)
+	if _, ok := d.GetOk("name"); !ok {
+		d.Set("name", server.Name)
+	}
+	if _, ok := d.GetOk("plan"); !ok {
+		d.Set("plan", server.Plan)
+	}
+	if _, ok := d.GetOk("location"); !ok {
+		d.Set("location", server.Location)
+	}
+	if _, ok := d.GetOk("notes"); !ok {
+		d.Set("notes", server.Notes)
+	}
+	if _, ok := d.GetOk("ssh_key"); !ok && server.SSHKey != "" {
+		d.Set("ssh_key", server.SSHKey)
+	}
 	d.Set("ipv4", server.Ipv4)
 	d.Set("ipv6", server.Ipv6)
 	d.Set("so", server.So)

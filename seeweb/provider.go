@@ -26,7 +26,9 @@ func Provider() *schema.Provider {
 			},
 		},
 
-		DataSourcesMap: map[string]*schema.Resource{},
+		DataSourcesMap: map[string]*schema.Resource{
+			"seeweb_server": dataSourceSeewebServer(),
+		},
 
 		ResourcesMap: map[string]*schema.Resource{
 			"seeweb_server": resourceSeewebServer(),

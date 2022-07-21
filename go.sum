@@ -8,6 +8,10 @@ github.com/ProtonMail/go-crypto v0.0.0-20210428141323-04723f9f07d7 h1:YoJbenK9C6
 github.com/ProtonMail/go-crypto v0.0.0-20210428141323-04723f9f07d7/go.mod h1:z4/9nQmJSSwwds7ejkxaJwO37dru3geImFUdJlaLzQo=
 github.com/Seeweb/cloudserver-go-client v0.0.0-20220719042110-1bfe0a1824b6 h1:h+xebiELNyKEfmgygARzJoz+APpvCkJHu5cuCMdkd/0=
 github.com/Seeweb/cloudserver-go-client v0.0.0-20220719042110-1bfe0a1824b6/go.mod h1:j+ooVvlLyx/1XnGRh4ZSl2H+r82k2Oua1M51WVJHdf8=
+github.com/Seeweb/cloudserver-go-client v0.0.0-20220721035049-7ed61c257ac5 h1:BU7x5QJIpn7g9WLxtYCKxU+CEDOSV7+M1G4vKygqkYc=
+github.com/Seeweb/cloudserver-go-client v0.0.0-20220721035049-7ed61c257ac5/go.mod h1:j+ooVvlLyx/1XnGRh4ZSl2H+r82k2Oua1M51WVJHdf8=
+github.com/Seeweb/cloudserver-go-client v0.0.0-20220721053929-808fdd9a24e8 h1:AfmHHHCPukqn6lY42oojz1h4BZ8OZhVk370aUGJV/4Q=
+github.com/Seeweb/cloudserver-go-client v0.0.0-20220721053929-808fdd9a24e8/go.mod h1:j+ooVvlLyx/1XnGRh4ZSl2H+r82k2Oua1M51WVJHdf8=
 github.com/acomagu/bufpipe v1.0.3 h1:fxAGrHZTgQ9w5QqVItgzwj235/uYZYgbXitB+dLupOk=
 github.com/acomagu/bufpipe v1.0.3/go.mod h1:mxdxdup/WdsKVreO5GpW4+M/1CE2sMG4jeGJ2sYmHc4=
 github.com/agext/levenshtein v1.2.2 h1:0S/Yg6LYmFJ5stwQeRp6EeOcCbj7xiqQSdNelsXvaqE=
