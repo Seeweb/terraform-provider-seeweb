@@ -2,8 +2,6 @@ package seeweb
 
 import (
 	"log"
-	"strconv"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -104,6 +102,6 @@ func dataSourceSeewebServerRead(d *schema.ResourceData, meta interface{}) error 
 		return err
 	}
 
-	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
+	d.SetId(d.Get("name").(string))
 	return nil
 }
