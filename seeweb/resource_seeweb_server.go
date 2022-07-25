@@ -228,14 +228,17 @@ func resourceSeewebServerUpdate(d *schema.ResourceData, meta interface{}) error 
 		return err
 	}
 
-	log.Printf("[INFO] Updating Seeweb server %s", d.Id())
+	return resource.Retry(2*time.Minute, func() *resource.RetryError {
+		log.Printf("[INFO] Updating Seeweb server %s", d.Id())
+		_, _, err := client.Server.Update(d.Id(), req)
+		if err != nil {
+			log.Printf("[INFO] Server update error. Retrying in %d seconds", retryAfter30Seconds)
+			time.Sleep(time.Duration(retryAfter30Seconds) * time.Second)
+			return resource.RetryableError(err)
+		}
 
-	_, _, err = client.Server.Update(d.Id(), req)
-	if err != nil {
-		return err
-	}
-
-	return nil
+		return nil
+	})
 }
 
 func resourceSeewebServerDelete(d *schema.ResourceData, meta interface{}) error {

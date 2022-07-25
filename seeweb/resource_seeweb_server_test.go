@@ -58,6 +58,7 @@ func TestAccSeewebServer_Basic(t *testing.T) {
 	location := "it-fr2"
 	image := "centos-7"
 	notes := fmt.Sprintf("%s::server created during acceptance tests", TEST_RESOURCE_PREFIX)
+	notesUpdated := fmt.Sprintf("%s::server updated during acceptance tests", TEST_RESOURCE_PREFIX)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -76,6 +77,22 @@ func TestAccSeewebServer_Basic(t *testing.T) {
 						"seeweb_server.testacc", "image", image),
 					resource.TestCheckResourceAttr(
 						"seeweb_server.testacc", "notes", notes),
+					resource.TestCheckResourceAttr(
+						"seeweb_server.testacc", "active_flag", "false"),
+				),
+			},
+			{
+				Config: testAccCheckSeewebServerConfig(plan, location, image, notesUpdated),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckSeewebServerExists("seeweb_server.testacc"),
+					resource.TestCheckResourceAttr(
+						"seeweb_server.testacc", "plan", plan),
+					resource.TestCheckResourceAttr(
+						"seeweb_server.testacc", "location", location),
+					resource.TestCheckResourceAttr(
+						"seeweb_server.testacc", "image", image),
+					resource.TestCheckResourceAttr(
+						"seeweb_server.testacc", "notes", notesUpdated),
 					resource.TestCheckResourceAttr(
 						"seeweb_server.testacc", "active_flag", "false"),
 				),
