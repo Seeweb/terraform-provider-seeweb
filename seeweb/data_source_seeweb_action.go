@@ -3,6 +3,7 @@ package seeweb
 import (
 	"fmt"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/Seeweb/cloudserver-go-client/seeweb"
@@ -16,7 +17,7 @@ func dataSourceSeewebAction() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"id": {
-				Type:     schema.TypeString,
+				Type:     schema.TypeInt,
 				Required: true,
 			},
 			"status": {
@@ -66,8 +67,8 @@ func fetchAction(d *schema.ResourceData, meta interface{}, errCallback func(erro
 	}
 
 	return resource.Retry(30*time.Second, func() *resource.RetryError {
-		id := d.Get("id").(string)
-		resp, _, err := client.Action.Get(id)
+		id := d.Get("id").(int)
+		resp, _, err := client.Action.Get(strconv.Itoa(id))
 		if err != nil {
 			log.Printf("[INFO] Action read error. Retrying in %d seconds", retryAfter5Seconds)
 			errResp := errCallback(err, d)
@@ -82,7 +83,7 @@ func fetchAction(d *schema.ResourceData, meta interface{}, errCallback func(erro
 
 		if resp.Action == nil {
 			return resource.NonRetryableError(
-				fmt.Errorf("Unable to locate any action with the id: %s", id),
+				fmt.Errorf("Unable to locate any action with the id: %d", id),
 			)
 		}
 
@@ -94,13 +95,13 @@ func fetchAction(d *schema.ResourceData, meta interface{}, errCallback func(erro
 }
 
 func dataSourceSeewebActionRead(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[INFO] Reading Seeweb action %s", d.Get("id").(string))
+	log.Printf("[INFO] Reading Seeweb action %d", d.Get("id").(int))
 	err := fetchAction(d, meta, handleNotFoundError)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(d.Get("id").(string))
+	d.SetId(strconv.Itoa(d.Get("id").(int)))
 	return nil
 }
 
