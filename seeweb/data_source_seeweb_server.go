@@ -96,7 +96,7 @@ func dataSourceSeewebServer() *schema.Resource {
 }
 
 func dataSourceSeewebServerRead(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[INFO] Reading Seeweb server %s", d.Id())
+	log.Printf("[INFO] Reading Seeweb server %s", d.Get("name").(string))
 	err := fetchServer(d, meta, handleNotFoundError)
 	if err != nil {
 		return err
