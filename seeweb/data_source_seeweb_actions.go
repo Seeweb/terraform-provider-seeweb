@@ -67,7 +67,7 @@ func dataSourceSeewebActions() *schema.Resource {
 	}
 }
 
-func fetchActionList(d *schema.ResourceData, meta interface{}, errCallback func(error, *schema.ResourceData) error) error {
+func fetchActionListData(d *schema.ResourceData, meta interface{}) error {
 	client, err := meta.(*Config).Client()
 	if err != nil {
 		return err
@@ -77,14 +77,8 @@ func fetchActionList(d *schema.ResourceData, meta interface{}, errCallback func(
 		resp, _, err := client.Action.List()
 		if err != nil {
 			log.Printf("[INFO] Actions read error. Retrying in %d seconds", retryAfter5Seconds)
-			errResp := errCallback(err, d)
-			if errResp != nil {
-				time.Sleep(time.Duration(retryAfter5Seconds) * time.Second)
-				return resource.RetryableError(errResp)
-			}
-
-			return nil
-
+			time.Sleep(time.Duration(retryAfter5Seconds) * time.Second)
+			return resource.RetryableError(err)
 		}
 
 		if err := flattenActions(d, resp.Actions); err != nil {
@@ -96,7 +90,7 @@ func fetchActionList(d *schema.ResourceData, meta interface{}, errCallback func(
 
 func dataSourceSeewebActionsRead(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Reading Seeweb actions")
-	err := fetchActionList(d, meta, handleNotFoundError)
+	err := fetchActionListData(d, meta)
 	if err != nil {
 		return err
 	}

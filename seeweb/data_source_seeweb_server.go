@@ -1,8 +1,11 @@
 package seeweb
 
 import (
+	"fmt"
 	"log"
+	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -95,9 +98,37 @@ func dataSourceSeewebServer() *schema.Resource {
 	}
 }
 
+func fetchServerData(d *schema.ResourceData, meta interface{}) error {
+	client, err := meta.(*Config).Client()
+	if err != nil {
+		return err
+	}
+
+	return resource.Retry(2*time.Minute, func() *resource.RetryError {
+		name := d.Get("name").(string)
+		server, err := getServerByName(name, client)
+		if err != nil {
+			log.Printf("[INFO] Server read error. Retrying in %d seconds", retryAfter30Seconds)
+			time.Sleep(time.Duration(retryAfter30Seconds) * time.Second)
+			return resource.RetryableError(err)
+		}
+
+		if server == nil {
+			return resource.NonRetryableError(
+				fmt.Errorf("Unable to locate any server with the name: %s", name),
+			)
+		}
+
+		if err := flattenServer(d, server); err != nil {
+			return resource.NonRetryableError(err)
+		}
+		return nil
+	})
+}
+
 func dataSourceSeewebServerRead(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Reading Seeweb server %s", d.Get("name").(string))
-	err := fetchServer(d, meta, handleNotFoundError)
+	err := fetchServerData(d, meta)
 	if err != nil {
 		return err
 	}
