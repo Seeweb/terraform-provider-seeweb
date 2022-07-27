@@ -32,6 +32,7 @@ func Provider() *schema.Provider {
 			"seeweb_actions":   dataSourceSeewebActions(),
 			"seeweb_template":  dataSourceSeewebTemplate(),
 			"seeweb_templates": dataSourceSeewebTemplates(),
+			"seeweb_regions":   dataSourceSeewebRegions(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
