@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccDataSourceSeewebRegions_Basic(t *testing.T) {
-	expectedLocation := "it-fr1"
+	expectedLocation := "it-fr2"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
