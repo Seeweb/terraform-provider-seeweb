@@ -22,42 +22,30 @@ func dataSourceSeewebTemplates() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"id": {
 							Type:     schema.TypeInt,
+							Required: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"creation_date": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"active_flag": {
+							Type:     schema.TypeBool,
 							Computed: true,
 						},
 						"status": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"user": {
+						"uuid": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"created_at": {
+						"notes": {
 							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"started_at": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"completed_at": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"resource": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"resource_type": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"type": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"progress": {
-							Type:     schema.TypeInt,
 							Computed: true,
 						},
 					},

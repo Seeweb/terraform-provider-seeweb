@@ -10,6 +10,28 @@ import (
 )
 
 func TestAccDataSourceSeewebTemplate_Basic(t *testing.T) {
+	templateId := "504"
+	templateName := "ei200088"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceSeewebTemplateConfig(templateId),
+				Check: resource.ComposeTestCheckFunc(
+					testAccDataSourceSeewebTemplateExists("data.seeweb_template.testacc"),
+					resource.TestCheckResourceAttr(
+						"data.seeweb_template.testacc", "id", templateId),
+					resource.TestCheckResourceAttr(
+						"data.seeweb_template.testacc", "name", templateName),
+				),
+			},
+		},
+	})
+}
+
+func TestAccDataSourceSeewebTemplate_NotFound(t *testing.T) {
 	templateId := "9999999"
 	expectedError := "failed 404 Not Found"
 
