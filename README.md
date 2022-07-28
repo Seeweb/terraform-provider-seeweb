@@ -21,7 +21,33 @@ $ cd $GOPATH/src/github.com/Seeweb/terraform-provider
 $ export GOPRIVATE=github.com/Seeweb/* # This step is only necessary if the modules are kept private
 $ make build
 ```
-### Testing
+
+## Using built Provider Locally
+
+In order to test a built version of this Terraform Provider locally, you will to run the following...
+
+```sh
+go build -o terraform-provider-seeweb
+# The next location might be different in you machine so would need to check first
+mv terraform-provider-seeweb ~/.terraform.d/plugins/registry.terraform.io/hashicorp/seeweb/0.0.1/darwin_arm64
+```
+
+After that you will be able to require the provider as `seeweb`, like in the following *example*...
+
+## Example
+
+```hcl
+provider "seeweb" {} # Expecting Seeweb auth token in env var $SEEWEB_TOKEN
+
+resource "seeweb_server" "testacc" {
+  plan     = "ECS1"
+  location = "it-fr2"
+  image    = "centos-7"
+  notes    = "created with Terraform"
+}
+```
+
+## Testing
 
 In order to test the provider, you can simply run `make test`.
 
