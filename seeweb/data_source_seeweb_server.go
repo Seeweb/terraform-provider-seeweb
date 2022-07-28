@@ -104,7 +104,7 @@ func fetchServerData(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	return resource.Retry(2*time.Minute, func() *resource.RetryError {
+	return resource.Retry(3*time.Minute, func() *resource.RetryError {
 		name := d.Get("name").(string)
 		server, err := getServerByName(name, client)
 		if err != nil {
