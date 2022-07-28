@@ -172,7 +172,6 @@ func fetchServer(d *schema.ResourceData, meta interface{}, errCallback func(erro
 			}
 
 			return nil
-
 		}
 
 		if server == nil {

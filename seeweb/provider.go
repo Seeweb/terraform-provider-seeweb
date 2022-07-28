@@ -39,6 +39,7 @@ func Provider() *schema.Provider {
 
 		ResourcesMap: map[string]*schema.Resource{
 			"seeweb_server": resourceSeewebServer(),
+			"seeweb_group":  resourceSeewebGroup(),
 		},
 	}
 
