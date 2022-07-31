@@ -35,7 +35,7 @@ The following arguments are supported:
 
 ### Plan Size (`plan_size`) supports the following:
 
-* `core` - pending.
+* `core` - Number of CPU cores.
 * `ram` - Memory size in MB.
 * `disk` - Disk size in MB.
 
