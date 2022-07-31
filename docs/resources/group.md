@@ -16,8 +16,8 @@ resource "seeweb_group" "example" {
 
 The following arguments are supported:
 
-  * `notes` - (Required) A human-readable friendly description.
-  * `password` - (Required) A private password used to make a subview of the infrastructure.
+  * `notes` - (Required) A human-readable friendly description. (*Forces new resource*)
+  * `password` - (Required) A private password used to make a subview of the infrastructure. (*Forces new resource*)
 
 ## Attributes Reference
 
