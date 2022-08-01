@@ -1,5 +1,5 @@
 #!/bin/sh -e
-#You can run this script to export the ticket to environment variables
+#You can run this script to export the token to environment variables
 #Ex: source get_token.sh
 
 APIURL="https://api.seeweb.it/ecs/v2/login"
