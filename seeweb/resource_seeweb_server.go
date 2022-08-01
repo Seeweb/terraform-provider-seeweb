@@ -5,6 +5,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/hashicorp/go-cty/cty"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
@@ -48,7 +50,19 @@ func resourceSeewebServer() *schema.Resource {
 			"group": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
+				ValidateDiagFunc: func(v interface{}, p cty.Path) diag.Diagnostics {
+					value := v.(string)
+					var diags diag.Diagnostics
+					if value == "" {
+						diag := diag.Diagnostic{
+							Severity: diag.Error,
+							Summary:  "wrong value",
+							Detail:   "Value for \"group\" can not be blank",
+						}
+						diags = append(diags, diag)
+					}
+					return diags
+				},
 			},
 			"name": {
 				Type:     schema.TypeString,
@@ -187,6 +201,35 @@ func fetchServer(d *schema.ResourceData, meta interface{}, errCallback func(erro
 	})
 }
 
+func updateServer(name string, r *seeweb.SeewebServerUpdateRequest, c *seeweb.Client) error {
+	return resource.Retry(3*time.Minute, func() *resource.RetryError {
+		log.Printf("[INFO] Updating Seeweb server %s", name)
+		_, _, err := c.Server.Update(name, r)
+		if err != nil {
+			log.Printf("[INFO] Server update error. Retrying in %d seconds", retryAfter30Seconds)
+			time.Sleep(time.Duration(retryAfter30Seconds) * time.Second)
+			return resource.RetryableError(err)
+		}
+
+		return nil
+	})
+}
+
+func deleteServer(name string, d *schema.ResourceData, c *seeweb.Client) error {
+	return resource.Retry(3*time.Minute, func() *resource.RetryError {
+		log.Printf("[INFO] Deleting Seeweb server %s", name)
+		if _, _, err := c.Server.Delete(name); err != nil {
+			log.Printf("[INFO] Server deletion error. Retrying in %d seconds", retryAfter30Seconds)
+			time.Sleep(time.Duration(retryAfter30Seconds) * time.Second)
+			return resource.RetryableError(err)
+		}
+
+		d.SetId("")
+		return nil
+	})
+
+}
+
 func resourceSeewebServerCreate(d *schema.ResourceData, meta interface{}) error {
 	client, err := meta.(*Config).Client()
 	if err != nil {
@@ -203,6 +246,24 @@ func resourceSeewebServerCreate(d *schema.ResourceData, meta interface{}) error 
 	resp, _, err := client.Server.Create(req)
 	if err != nil {
 		return err
+	}
+
+	// Add group to Server if one is supplied during creation
+	group := d.Get("group").(string)
+	if group != "" {
+		var errDeletingStailedServer error
+		errUpdatingServer := updateServer(resp.Server.Name, &seeweb.SeewebServerUpdateRequest{Group: group}, client)
+		if errUpdatingServer != nil {
+			log.Printf("[INFO] Server group assignment failed with error %v. Proceeding to delete already created Server %q.", errUpdatingServer, resp.Server.Name)
+			// Delete server if group assignation got interrupted
+			errDeletingStailedServer = deleteServer(resp.Server.Name, d, client)
+		}
+		if errDeletingStailedServer != nil {
+			return fmt.Errorf("Error: %v. Might be a dangling Server with name %q", errDeletingStailedServer.Error(), resp.Server.Name)
+		}
+		if errUpdatingServer != nil {
+			return fmt.Errorf("Error: %v during group %q assignation to Server", errUpdatingServer, group)
+		}
 	}
 
 	d.SetId(resp.Server.Name)
@@ -223,21 +284,7 @@ func resourceSeewebServerUpdate(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	req := buildServerUpdateReq(d)
-	if err != nil {
-		return err
-	}
-
-	return resource.Retry(3*time.Minute, func() *resource.RetryError {
-		log.Printf("[INFO] Updating Seeweb server %s", d.Id())
-		_, _, err := client.Server.Update(d.Id(), req)
-		if err != nil {
-			log.Printf("[INFO] Server update error. Retrying in %d seconds", retryAfter30Seconds)
-			time.Sleep(time.Duration(retryAfter30Seconds) * time.Second)
-			return resource.RetryableError(err)
-		}
-
-		return nil
-	})
+	return updateServer(d.Id(), req, client)
 }
 
 func resourceSeewebServerDelete(d *schema.ResourceData, meta interface{}) error {
@@ -246,17 +293,11 @@ func resourceSeewebServerDelete(d *schema.ResourceData, meta interface{}) error 
 		return err
 	}
 
-	return resource.Retry(3*time.Minute, func() *resource.RetryError {
-		log.Printf("[INFO] Deleting Seeweb server %s", d.Id())
-		if _, _, err := client.Server.Delete(d.Id()); err != nil {
-			log.Printf("[INFO] Server deletion error. Retrying in %d seconds", retryAfter30Seconds)
-			time.Sleep(time.Duration(retryAfter30Seconds) * time.Second)
-			return resource.RetryableError(err)
-		}
-
-		d.SetId("")
-		return nil
-	})
+	// Remove server from any group it belongs to
+	if err = updateServer(d.Id(), &seeweb.SeewebServerUpdateRequest{Group: "nogroup"}, client); err != nil {
+		return err
+	}
+	return deleteServer(d.Id(), d, client)
 }
 
 func flattenServer(d *schema.ResourceData, server *seeweb.Server) error {
@@ -275,6 +316,9 @@ func flattenServer(d *schema.ResourceData, server *seeweb.Server) error {
 	if _, ok := d.GetOk("ssh_key"); !ok && server.SSHKey != "" {
 		d.Set("ssh_key", server.SSHKey)
 	}
+	if server.Group != nil && *server.Group != "" {
+		d.Set("group", *server.Group)
+	}
 	d.Set("ipv4", server.Ipv4)
 	d.Set("ipv6", server.Ipv6)
 	d.Set("so", server.So)
@@ -283,7 +327,6 @@ func flattenServer(d *schema.ResourceData, server *seeweb.Server) error {
 	d.Set("active_flag", server.ActiveFlag)
 	d.Set("status", server.Status)
 	d.Set("api_version", server.APIVersion)
-	d.Set("group", server.Group)
 	d.Set("user", server.User)
 
 	if server.PlanSize != nil {

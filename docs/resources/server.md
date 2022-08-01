@@ -23,7 +23,9 @@ The following arguments are supported:
   * `image` - (Required) The image name of a public or private template. (*Forces new resource*)
   * `notes` - (Required) The human-readable string you wish to use to display server name.
   * `ssh_key` - (Optional) Public key label. (*Forces new resource*)
-  * `group` - (Optional) The group name where the server belongs.
+  * `group` - (Optional) The group name where the server belongs. If it set, it can not be blank and to dissociate a group from a server the keyword **"nogroup"** needs to be set.
+  
+  -> When a Server with a `group` configured is destroyed, the *group* dissociation will automatically occur during its deletion.
 
 ## Attributes Reference
 

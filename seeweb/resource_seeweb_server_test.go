@@ -101,6 +101,55 @@ func TestAccSeewebServer_Basic(t *testing.T) {
 	})
 }
 
+func TestAccSeewebServer_WithGroup(t *testing.T) {
+	plan := "ECS1"
+	location := "it-fr2"
+	image := "centos-7"
+	serverNotes := fmt.Sprintf("%s::server created during acceptance tests", TEST_RESOURCE_PREFIX)
+	groupNotes := fmt.Sprintf("%s::group created during acceptance tests", TEST_RESOURCE_PREFIX)
+	groupPass := "secret"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckSeewebServerDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckSeewebServerWithGroupConfig(groupNotes, groupPass, plan, location, image, serverNotes),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckSeewebServerExists("seeweb_server.testacc"),
+					resource.TestCheckResourceAttr(
+						"seeweb_server.testacc", "plan", plan),
+					resource.TestCheckResourceAttr(
+						"seeweb_server.testacc", "location", location),
+					resource.TestCheckResourceAttr(
+						"seeweb_server.testacc", "image", image),
+					resource.TestCheckResourceAttr(
+						"seeweb_server.testacc", "notes", serverNotes),
+					resource.TestCheckResourceAttrSet(
+						"seeweb_server.testacc", "group"),
+				),
+			},
+			{
+				Config: testAccCheckSeewebServerWithGroupUpdatedConfig(groupNotes, groupPass, plan, location, image, serverNotes),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckSeewebServerExists("seeweb_server.testacc"),
+					resource.TestCheckResourceAttr(
+						"seeweb_server.testacc", "plan", plan),
+					resource.TestCheckResourceAttr(
+						"seeweb_server.testacc", "location", location),
+					resource.TestCheckResourceAttr(
+						"seeweb_server.testacc", "image", image),
+					resource.TestCheckResourceAttr(
+						"seeweb_server.testacc", "notes", serverNotes),
+					resource.TestCheckResourceAttr(
+						"seeweb_server.testacc", "group", "nogroup"),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckSeewebServerDestroy(s *terraform.State) error {
 	client, _ := testAccProvider.Meta().(*Config).Client()
 	for _, r := range s.RootModule().Resources {
@@ -156,4 +205,44 @@ func testAccCheckSeewebServerConfig(plan, location, image, notes string) string 
     }
 
 `, plan, location, image, notes)
+}
+
+func testAccCheckSeewebServerWithGroupConfig(groupNotes, groupPass, plan, location, image, serverNotes string) string {
+	return fmt.Sprintf(`
+    resource "seeweb_group" "testacc" {
+      notes        = "%s"
+      password       = "%s"
+    }
+
+    resource "seeweb_server" "testacc" {
+      depends_on = [seeweb_group.testacc]
+
+      plan        = "%s"
+      location       = "%s"
+      image       = "%s"
+      notes       = "%s"
+      group = seeweb_group.testacc.name
+    }
+
+`, groupNotes, groupPass, plan, location, image, serverNotes)
+}
+
+func testAccCheckSeewebServerWithGroupUpdatedConfig(groupNotes, groupPass, plan, location, image, serverNotes string) string {
+	return fmt.Sprintf(`
+    resource "seeweb_group" "testacc" {
+      notes        = "%s"
+      password       = "%s"
+    }
+
+    resource "seeweb_server" "testacc" {
+      depends_on = [seeweb_group.testacc]
+
+      plan        = "%s"
+      location       = "%s"
+      image       = "%s"
+      notes       = "%s"
+      group = "nogroup"
+    }
+
+`, groupNotes, groupPass, plan, location, image, serverNotes)
 }
