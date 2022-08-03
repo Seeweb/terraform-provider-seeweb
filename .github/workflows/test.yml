@@ -16,6 +16,8 @@ jobs:
         go-version: 1.18
     -
       name: Run tests
+      env:
+        GOPRIVATE: "github.com/Seeweb/*"
       run: |
         make test
         make vet
