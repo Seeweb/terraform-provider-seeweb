@@ -17,7 +17,7 @@ jobs:
     -
       name: Run tests
       env:
-        GOPRIVATE: "github.com/Seeweb/*"
+        GOFLAGS: "-mod=vendor"
       run: |
         make test
         make vet
