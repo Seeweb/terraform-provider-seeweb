@@ -52,6 +52,6 @@ release:
   github: 
     owner: "Seeweb"
     name: "terraform-provider-Seeweb"
-  draft: true
+  draft: false
 changelog:
   skip: true
