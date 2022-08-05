@@ -48,7 +48,7 @@ signs:
 release:
   github: 
     owner: "Seeweb"
-    name: "terraform-provider-Seeweb"
+    name: "terraform-provider-seeweb"
   extra_files:
     - glob: 'terraform-registry-manifest.json'
       name_template: '{{ .ProjectName }}_{{ .Version }}_manifest.json'
