@@ -28,6 +28,9 @@ archives:
   - format: zip
     name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
 checksum:
+  extra_files:
+    - glob: 'terraform-registry-manifest.json'
+      name_template: '{{ .ProjectName }}_{{ .Version }}_manifest.json'
   name_template: '{{ .ProjectName }}_{{ .Version }}_SHA256SUMS'
   algorithm: sha256
 signs:
@@ -46,6 +49,10 @@ release:
   github: 
     owner: "Seeweb"
     name: "terraform-provider-Seeweb"
-  draft: false
+  extra_files:
+    - glob: 'terraform-registry-manifest.json'
+      name_template: '{{ .ProjectName }}_{{ .Version }}_manifest.json'
+  # If you want to manually examine the release before its live, uncomment this line:
+  # draft: false
 changelog:
   skip: true
