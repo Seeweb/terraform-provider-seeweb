@@ -7,7 +7,7 @@
 
 ## Building The Provider
 
-Clone repository to: `$GOPATH/src/github.com/Seeweb/terraform-provider`
+Clone repository to: `$GOPATH/src/github.com/Seeweb/terraform-provider-seeweb`
 
 ```sh
 $ mkdir -p $GOPATH/src/github.com/Seeweb; cd $GOPATH/src/github.com/Seeweb
