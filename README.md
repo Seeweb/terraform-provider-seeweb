@@ -17,7 +17,7 @@ $ git clone git@github.com:Seeweb/terraform-provider-seeweb
 Enter the provider directory and build the provider
 
 ```sh
-$ cd $GOPATH/src/github.com/Seeweb/terraform-provider
+$ cd $GOPATH/src/github.com/Seeweb/terraform-provider-seeweb
 $ export GOPRIVATE=github.com/Seeweb/* # This step is only necessary if the modules are kept private
 $ make build
 ```
