@@ -11,7 +11,7 @@ Clone repository to: `$GOPATH/src/github.com/Seeweb/terraform-provider-seeweb`
 
 ```sh
 $ mkdir -p $GOPATH/src/github.com/Seeweb; cd $GOPATH/src/github.com/Seeweb
-$ git clone git@github.com:Seeweb/terraform-provider
+$ git clone git@github.com:Seeweb/terraform-provider-seeweb
 ```
 
 Enter the provider directory and build the provider
